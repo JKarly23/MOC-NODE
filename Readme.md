@@ -32,7 +32,7 @@ Este proyecto permite monitorear el estado de un servicio (UP/DOWN) y registrar 
 ## Instalación
 
 ```bash
-git clone https://github.com/tuusuario/MOC-NODE.git
+git clone https://github.com/JKarly23/MOC-NODE.git
 cd MOC-NODE
 npm install
 ```
