@@ -6,6 +6,9 @@ import { LogRepositoryImp } from "../infrastructure/repositories/log.repository.
 import { CronService } from "./cron/cron-service";
 import { EmailService } from "./email/email.services";
 
+
+process.loadEnvFile();
+
 // instance of data source
 const dataSourceFS = new FileSystemDataSource();
 const dataSourceMDB = new MongoDatasource();
@@ -16,12 +19,10 @@ const emailService = new EmailService();
 // instance of use case 
 const sendEmail = new SendEmailLogs(logRepository, emailService);
 
-const destinatary: string[] = [
-    'perezsalcedocarlosjavier191@gmail.com',
-]
+const recipients: string[] = process.env.LOGS_RECIPIENTS ? JSON.parse(process.env.LOGS_RECIPIENTS) : [];
 
 const sendDailyEmail = () => {
-    sendEmail.execute(destinatary).match({
+    sendEmail.execute(recipients).match({
         success: () => console.log('Email sent suscefully'),
         failure: (err) => console.log(err)
     });
