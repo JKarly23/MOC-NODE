@@ -1,30 +1,17 @@
-import { promises as fs } from 'fs';
-import { ResultAsync } from 'typescript-functional-extensions';
+import { LogSeverityLevel } from "./domain/entities/log.entity";
+import { LogRepository } from "./domain/repository/log.repository";
+import { MongoDatasource } from "./infrastructure/datasource/db/mongo/mongoose.datasource";
+import { LogRepositoryImp } from "./infrastructure/repositories/log.repository.imp";
+import { Server } from "./presentation/server";
+
+const mongoClient = new MongoDatasource();
+const logRepository = new LogRepositoryImp(mongoClient);
+
+(async () => main())()
+
+async function main() {
+    Server.start();
+    // console.log(await logRepository.getLogs(LogSeverityLevel.high));
 
 
-const countWords = (data: string): ResultAsync<number | string> => {
-    return data.length > 0
-        ? ResultAsync.success((data.match(/sit/gi) || []).length)
-        : ResultAsync.failure('No words to count');
 }
-
-const readingData = (): ResultAsync<number | string> => {
-    return ResultAsync.try(
-        () => fs.readFile('data/data.md', {
-            encoding: 'utf-8',
-            flag: 'r'
-        }),
-        () => 'Error reading file'
-    ).ensure(
-        (data: string) => data.length > 0,
-        () => 'File is empty or does not exist'
-    ).bind(countWords);
-}
-
-
-
-console.log('Reading data...');
-readingData().match({
-    success: (count) => console.log(`Counted words: ${count}`),
-    failure: (error) => console.error(`Error: ${error}`)
-})
